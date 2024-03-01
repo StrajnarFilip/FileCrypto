@@ -13,11 +13,11 @@ namespace FileCrypto.Views;
 public partial class MainWindow : Window
 {
     private const int IV_SIZE = 16;
-    public IStorageFile? KeyFile { get; set; }
-    public IStorageFile? ChosenFile { get; set; }
-    public IStorageFile? DestinationFile { get; set; }
-    public byte[] RawKey { get; set; }
-    public string HexKey => Convert.ToHexString(RawKey);
+    private IStorageFile? KeyFile { get; set; }
+    private IStorageFile? ChosenFile { get; set; }
+    private IStorageFile? DestinationFile { get; set; }
+    private byte[] RawKey { get; set; }
+    private string HexKey => Convert.ToHexString(RawKey);
 
     public MainWindow()
     {
