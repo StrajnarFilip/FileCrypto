@@ -146,7 +146,15 @@ public partial class MainWindow : Window
     {
         if (KeyTextBox.Text is null)
             return;
-        RawKey = Convert.FromHexString(KeyTextBox.Text);
+        try
+        {
+            RawKey = Convert.FromHexString(KeyTextBox.Text);
+            StatusLabel.Content = $"{DateTime.Now}: Key is changed.";
+        }
+        catch
+        {
+            StatusLabel.Content = $"{DateTime.Now}: Provided key is invalid.";
+        }
     }
 
     private async void CopyToClipboardOnClick(object? sender, RoutedEventArgs e)
