@@ -134,4 +134,10 @@ public partial class MainWindow : Window
             return;
         RawKey = Convert.FromHexString(KeyTextBox.Text);
     }
+
+    private async void CopyToClipboardOnClick(object? sender, RoutedEventArgs e)
+    {
+        if (Clipboard is not null)
+            await Clipboard.SetTextAsync(HexKey);
+    }
 }

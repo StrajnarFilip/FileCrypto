@@ -21,6 +21,7 @@
             <Button Click="GenerateKeyOnClick">Generate new key</Button>
             <Button Click="SaveKeyOnClick">Save key</Button>
             <Button Content="Select key" Click="ChooseKeyOnClick" />
+            <Button Content="Copy key to clipboard" Click="CopyToClipboardOnClick" />
         </StackPanel>
 
 
