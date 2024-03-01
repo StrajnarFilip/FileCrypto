@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -64,11 +65,13 @@ public partial class MainWindow : Window
         KeyFile = pickedFiles[0];
         KeyLabel.Content = KeyFile.Name;
         await using var keyReader = await KeyFile.OpenReadAsync();
-        var key = new byte[32];
+        var key = new byte[64];
         var bytesRead = await keyReader.ReadAsync(key);
-        if (bytesRead != 16 && bytesRead != 24 && bytesRead != 32)
+        if (bytesRead != 32 && bytesRead != 48 && bytesRead != 64)
             return;
-        var fullKey = key.Take(bytesRead).ToArray();
+        var hexKey = Encoding.UTF8.GetString(key.Take(bytesRead).ToArray());
+        RawKey = Convert.FromHexString(hexKey);
+        KeyTextBox.Text = HexKey;
     }
 
     private void ShowKeyOnClick(object? sender, RoutedEventArgs e)
