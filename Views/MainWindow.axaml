@@ -16,16 +16,27 @@
     </Design.DataContext>
 
     <StackPanel HorizontalAlignment="Center">
-        <Label Name="KeyLabel" Content="No key selected." />
-        <Button Click="GenerateKeyOnClick">Generate new key</Button>
-        <Button Click="SaveKeyOnClick">Save key</Button>
+        <StackPanel Orientation="Horizontal">
+            <Label Name="KeyLabel" Content="No key selected." />
+            <Button Click="GenerateKeyOnClick">Generate new key</Button>
+            <Button Click="SaveKeyOnClick">Save key</Button>
+            <Button Content="Select key" Click="ChooseKeyOnClick" />
+        </StackPanel>
+
+
         <TextBox Name="KeyTextBox" PasswordChar="*" TextChanged="KeyOnChanged"></TextBox>
         <CheckBox IsChecked="False" Click="ShowKeyOnClick">Show key</CheckBox>
-        <Button Content="Select key" Click="ChooseKeyOnClick" />
-        <Label Name="ChosenLabel" Content="No file selected." />
-        <Button Click="ChooseFileOnClick">Choose file</Button>
-        <Label Name="DestinationLabel" Content="No destination selected." />
-        <Button Click="ChooseDestinationOnClick">Choose destination</Button>
+
+        <StackPanel Orientation="Horizontal">
+            <Label Name="ChosenLabel" Content="No file selected." />
+            <Button Click="ChooseFileOnClick">Choose file</Button>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal">
+            <Label Name="DestinationLabel" Content="No destination selected." />
+            <Button Click="ChooseDestinationOnClick">Choose destination</Button>
+        </StackPanel>
+
         <Button Click="EncryptOnClick">Encrypt file</Button>
         <Button Click="DecryptOnClick">Decrypt file</Button>
     </StackPanel>
