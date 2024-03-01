@@ -2,6 +2,4 @@
 
 namespace FileCrypto.ViewModels;
 
-public class ViewModelBase : ReactiveObject
-{
-}
+public class ViewModelBase : ReactiveObject { }

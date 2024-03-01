@@ -2,10 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using System.Security.Cryptography;
 
 namespace FileCrypto.Views;
 
@@ -28,11 +28,9 @@ public partial class MainWindow : Window
 
     private async void ChooseFileOnClick(object? sender, RoutedEventArgs e)
     {
-        var pickedFiles = await this.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "Choose a file:",
-            AllowMultiple = false
-        });
+        var pickedFiles = await this.StorageProvider.OpenFilePickerAsync(
+            new FilePickerOpenOptions { Title = "Choose a file:", AllowMultiple = false }
+        );
 
         if (pickedFiles.Count != 1)
             return;
@@ -43,10 +41,9 @@ public partial class MainWindow : Window
 
     private async void ChooseDestinationOnClick(object? sender, RoutedEventArgs e)
     {
-        var pickedFiles = await this.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
-        {
-            Title = "Choose a file:"
-        });
+        var pickedFiles = await this.StorageProvider.SaveFilePickerAsync(
+            new FilePickerSaveOptions() { Title = "Choose a file:" }
+        );
 
         if (pickedFiles is null)
             return;
@@ -57,11 +54,9 @@ public partial class MainWindow : Window
 
     private async void ChooseKeyOnClick(object? sender, RoutedEventArgs e)
     {
-        var pickedFiles = await this.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "Choose a key file:",
-            AllowMultiple = false
-        });
+        var pickedFiles = await this.StorageProvider.OpenFilePickerAsync(
+            new FilePickerOpenOptions { Title = "Choose a key file:", AllowMultiple = false }
+        );
 
         if (pickedFiles.Count != 1)
             return;
