@@ -94,6 +94,9 @@ public partial class MainWindow : Window
         await using var cryptoStream = new CryptoStream(writer, encryptor, CryptoStreamMode.Write);
         await writer.WriteAsync(iv);
         await reader.CopyToAsync(cryptoStream);
+        
+        StatusLabel.Content =
+            $"{DateTime.Now}: Finished encrypting {ChosenFile.Path.AbsolutePath} into {DestinationFile.Path.AbsolutePath} .";
     }
 
     private async void DecryptOnClick(object? sender, RoutedEventArgs e)
@@ -114,6 +117,8 @@ public partial class MainWindow : Window
         await using var writer = await DestinationFile.OpenWriteAsync();
         await using var cryptoStream = new CryptoStream(writer, decryptor, CryptoStreamMode.Write);
         await reader.CopyToAsync(cryptoStream);
+        StatusLabel.Content =
+            $"{DateTime.Now}: Finished decrypting {ChosenFile.Path.AbsolutePath} into {DestinationFile.Path.AbsolutePath} .";
     }
 
     private void GenerateKeyOnClick(object? sender, RoutedEventArgs e)

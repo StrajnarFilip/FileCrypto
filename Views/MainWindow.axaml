@@ -40,5 +40,6 @@
 
         <Button Click="EncryptOnClick">Encrypt file</Button>
         <Button Click="DecryptOnClick">Decrypt file</Button>
+        <Label Name="StatusLabel">No action happened yet</Label>
     </StackPanel>
 </Window>
