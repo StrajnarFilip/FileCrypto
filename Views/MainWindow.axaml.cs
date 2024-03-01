@@ -63,7 +63,7 @@ public partial class MainWindow : Window
 
         KeyFile = pickedFiles[0];
         KeyLabel.Content = KeyFile.Name;
-        var keyReader = await KeyFile.OpenReadAsync();
+        await using var keyReader = await KeyFile.OpenReadAsync();
         var key = new byte[32];
         var bytesRead = await keyReader.ReadAsync(key);
         if (bytesRead != 16 && bytesRead != 24 && bytesRead != 32)
@@ -86,9 +86,9 @@ public partial class MainWindow : Window
         var aes = Aes.Create();
         var iv = RandomNumberGenerator.GetBytes(IV_SIZE);
         var encryptor = aes.CreateEncryptor(RawKey, iv);
-        var reader = await ChosenFile.OpenReadAsync();
-        var writer = await DestinationFile.OpenWriteAsync();
-        var cryptoStream = new CryptoStream(writer, encryptor, CryptoStreamMode.Write);
+        await using var reader = await ChosenFile.OpenReadAsync();
+        await using var writer = await DestinationFile.OpenWriteAsync();
+        await using var cryptoStream = new CryptoStream(writer, encryptor, CryptoStreamMode.Write);
         await writer.WriteAsync(iv);
         await reader.CopyToAsync(cryptoStream);
     }
@@ -98,7 +98,7 @@ public partial class MainWindow : Window
         if (ChosenFile is null || DestinationFile is null)
             return;
         var aes = Aes.Create();
-        var reader = await ChosenFile.OpenReadAsync();
+        await using var reader = await ChosenFile.OpenReadAsync();
         var iv = new byte[IV_SIZE];
         var bytesRead = await reader.ReadAsync(iv);
         if (bytesRead != IV_SIZE)
@@ -108,8 +108,8 @@ public partial class MainWindow : Window
         }
 
         var decryptor = aes.CreateDecryptor(RawKey, iv);
-        var writer = await DestinationFile.OpenWriteAsync();
-        var cryptoStream = new CryptoStream(writer, decryptor, CryptoStreamMode.Write);
+        await using var writer = await DestinationFile.OpenWriteAsync();
+        await using var cryptoStream = new CryptoStream(writer, decryptor, CryptoStreamMode.Write);
         await reader.CopyToAsync(cryptoStream);
     }
 
