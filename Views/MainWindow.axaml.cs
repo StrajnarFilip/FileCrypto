@@ -12,11 +12,22 @@ namespace FileCrypto.Views;
 
 public partial class MainWindow : Window
 {
-    private const int IV_SIZE = 16;
+    private byte[] _rawKey;
+    private const int IvSize = 16;
     private IStorageFile? KeyFile { get; set; }
     private IStorageFile? ChosenFile { get; set; }
     private IStorageFile? DestinationFile { get; set; }
-    private byte[] RawKey { get; set; }
+
+    private byte[] RawKey
+    {
+        get => _rawKey;
+        set
+        {
+            _rawKey = value;
+            KeyTextBox.Text = HexKey;
+        }
+    }
+
     private string HexKey => Convert.ToHexString(RawKey);
 
     public MainWindow()
@@ -71,7 +82,6 @@ public partial class MainWindow : Window
             return;
         var hexKey = Encoding.UTF8.GetString(key.Take(bytesRead).ToArray());
         RawKey = Convert.FromHexString(hexKey);
-        KeyTextBox.Text = HexKey;
     }
 
     private void ShowKeyOnClick(object? sender, RoutedEventArgs e)
@@ -87,14 +97,14 @@ public partial class MainWindow : Window
         if (ChosenFile is null || DestinationFile is null)
             return;
         var aes = Aes.Create();
-        var iv = RandomNumberGenerator.GetBytes(IV_SIZE);
+        var iv = RandomNumberGenerator.GetBytes(IvSize);
         var encryptor = aes.CreateEncryptor(RawKey, iv);
         await using var reader = await ChosenFile.OpenReadAsync();
         await using var writer = await DestinationFile.OpenWriteAsync();
         await using var cryptoStream = new CryptoStream(writer, encryptor, CryptoStreamMode.Write);
         await writer.WriteAsync(iv);
         await reader.CopyToAsync(cryptoStream);
-        
+
         StatusLabel.Content =
             $"{DateTime.Now}: Finished encrypting {ChosenFile.Path.AbsolutePath} into {DestinationFile.Path.AbsolutePath} .";
     }
@@ -105,9 +115,9 @@ public partial class MainWindow : Window
             return;
         var aes = Aes.Create();
         await using var reader = await ChosenFile.OpenReadAsync();
-        var iv = new byte[IV_SIZE];
+        var iv = new byte[IvSize];
         var bytesRead = await reader.ReadAsync(iv);
-        if (bytesRead != IV_SIZE)
+        if (bytesRead != IvSize)
         {
             Debug.WriteLine("Did not read amount of bytes, required for IV.");
             return;
@@ -125,7 +135,6 @@ public partial class MainWindow : Window
     {
         var newKey = RandomNumberGenerator.GetBytes(32);
         RawKey = newKey;
-        KeyTextBox.Text = HexKey;
     }
 
     private void SaveKeyOnClick(object? sender, RoutedEventArgs e)
