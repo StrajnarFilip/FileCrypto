@@ -18,7 +18,8 @@
     <StackPanel HorizontalAlignment="Center">
         <Label Name="KeyLabel" Content="No key selected." />
         <Button Click="GenerateKeyOnClick">Generate new key</Button>
-        <TextBox Name="KeyTextBox" PasswordChar="*"></TextBox>
+        <Button Click="SaveKeyOnClick">Save key</Button>
+        <TextBox Name="KeyTextBox" PasswordChar="*" TextChanged="KeyOnChanged"></TextBox>
         <CheckBox IsChecked="False" Click="ShowKeyOnClick">Show key</CheckBox>
         <Button Content="Select key" Click="ChooseKeyOnClick" />
         <Label Name="ChosenLabel" Content="No file selected." />

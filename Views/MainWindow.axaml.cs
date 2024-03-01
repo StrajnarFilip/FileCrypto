@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -14,14 +15,15 @@ public partial class MainWindow : Window
     public IStorageFile? KeyFile { get; set; }
     public IStorageFile? ChosenFile { get; set; }
     public IStorageFile? DestinationFile { get; set; }
-    public string HexKey { get; set; }
+    public byte[] RawKey { get; set; }
+    public string HexKey => Convert.ToHexString(RawKey);
 
     public MainWindow()
     {
         InitializeComponent();
         KeyFile = null;
         ChosenFile = null;
-        HexKey = "";
+        RawKey = Array.Empty<byte>();
     }
 
     private async void ChooseFileOnClick(object? sender, RoutedEventArgs e)
@@ -66,6 +68,12 @@ public partial class MainWindow : Window
 
         KeyFile = pickedFiles[0];
         KeyLabel.Content = KeyFile.Name;
+        var keyReader = await KeyFile.OpenReadAsync();
+        var key = new byte[32];
+        var bytesRead = await keyReader.ReadAsync(key);
+        if (bytesRead != 16 && bytesRead != 24 && bytesRead != 32)
+            return;
+        var fullKey = key.Take(bytesRead).ToArray();
     }
 
     private void ShowKeyOnClick(object? sender, RoutedEventArgs e)
@@ -82,7 +90,7 @@ public partial class MainWindow : Window
             return;
         var aes = Aes.Create();
         var iv = RandomNumberGenerator.GetBytes(IV_SIZE);
-        var encryptor = aes.CreateEncryptor(Convert.FromHexString(HexKey), iv);
+        var encryptor = aes.CreateEncryptor(RawKey, iv);
         var reader = await ChosenFile.OpenReadAsync();
         var writer = await DestinationFile.OpenWriteAsync();
         var cryptoStream = new CryptoStream(writer, encryptor, CryptoStreamMode.Write);
@@ -104,7 +112,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var decryptor = aes.CreateDecryptor(Convert.FromHexString(HexKey), iv);
+        var decryptor = aes.CreateDecryptor(RawKey, iv);
         var writer = await DestinationFile.OpenWriteAsync();
         var cryptoStream = new CryptoStream(writer, decryptor, CryptoStreamMode.Write);
         await reader.CopyToAsync(cryptoStream);
@@ -113,7 +121,19 @@ public partial class MainWindow : Window
     private void GenerateKeyOnClick(object? sender, RoutedEventArgs e)
     {
         var newKey = RandomNumberGenerator.GetBytes(32);
-        HexKey = Convert.ToHexString(newKey);
+        RawKey = newKey;
         KeyTextBox.Text = HexKey;
+    }
+
+    private void SaveKeyOnClick(object? sender, RoutedEventArgs e)
+    {
+        File.WriteAllText("FileCrypto.key", HexKey);
+    }
+
+    private void KeyOnChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (KeyTextBox.Text is null)
+            return;
+        RawKey = Convert.FromHexString(KeyTextBox.Text);
     }
 }
